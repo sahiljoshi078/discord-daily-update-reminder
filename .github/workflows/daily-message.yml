@@ -1,0 +1,19 @@
+name: Daily Discord Message
+
+on:
+  schedule:
+    - cron: "15 3 * * 1-5"   # 09:00 Nepal time (GMT+5:45), Mon–Fri
+  workflow_dispatch:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord message
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{"content":"!!!Daily-Update-Reminder!!!"}' \
+          "$WEBHOOK"
