@@ -1,8 +1,8 @@
-name: Daily Discord Message (Sceduled)
+name: Daily Discord Message
 
 on:
   schedule:
-    - cron: "* * * * *"   # 09:00 Nepal time (GMT+5:45), Mon–Fri
+    - cron: "15 3 * * 1-5"   # 09:00 Nepal time (GMT+5:45), Mon–Fri
   workflow_dispatch:
 
 jobs:
