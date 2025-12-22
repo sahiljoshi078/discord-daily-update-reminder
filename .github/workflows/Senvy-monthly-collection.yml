@@ -1,0 +1,19 @@
+name: Monthly Start Discord Message
+
+on:
+  schedule:
+    - cron: "15 3 1 * *" # 09:00 Nepal time, on day 1 of every month
+  workflow_dispatch:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord message (monthly start)
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_MONTH_START }}
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{"content":"📅 Monthly collection reminder!"}' \
+          "$WEBHOOK"
