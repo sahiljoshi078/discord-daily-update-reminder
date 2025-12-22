@@ -31,24 +31,13 @@ jobs:
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL_AF }}
         run: |
-          python - << 'PY'
+          NEP_MONTH=$(python - << 'PY'
           import nepali_datetime
-          import json
-          import subprocess
-      
-          bs = nepali_datetime.date.today()
-          nepali_month = bs.strftime("%B")  # Nepali month name
-      
-          payload = {
-              "content": f"AF: Monthly payment reminder – {nepali_month} (Nepali date 17)"
-          }
-      
-          subprocess.run([
-              "curl",
-              "-H", "Content-Type: application/json",
-              "-X", "POST",
-              "-d", json.dumps(payload),
-              "${WEBHOOK}"
-          ])
+          print(nepali_datetime.date.today().strftime("%B"))
           PY
+          )
 
+          curl --fail -H "Content-Type: application/json" \
+          -X POST \
+          -d "{\"content\":\"AF: Monthly payment reminder – ${NEP_MONTH} (Nepali date 17)\"}" \
+          "$WEBHOOK"
