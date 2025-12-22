@@ -1,0 +1,20 @@
+name: SNS Monthly Payment Reminder
+
+on:
+  schedule:
+    - cron: "15 3 1 * *"   # 09:00 Nepal time on day 1 of every month (03:15 UTC)
+  workflow_dispatch:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send SNS payment reminder
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL_SNS }}
+        run: |
+          MONTH=$(date -u +"%B")
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "{\"content\":\"SNS: Monthly payment reminder – ${MONTH}\"}" \
+          "$WEBHOOK"
