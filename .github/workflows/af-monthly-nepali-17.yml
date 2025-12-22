@@ -20,7 +20,7 @@ jobs:
           python - << 'PY'
           import nepali_datetime
           bs = nepali_datetime.date.today()
-          send = (bs.day == 17)
+          send = (bs.day == 7)
           print("Nepali date:", bs, "send:", send)
           with open("$GITHUB_OUTPUT", "a") as f:
               f.write(f"send={'true' if send else 'false'}\n")
