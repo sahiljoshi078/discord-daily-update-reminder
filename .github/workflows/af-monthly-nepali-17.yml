@@ -1,14 +1,9 @@
-name: AF Monthly Payment Reminder (Nepali 7th)
+name: AF Monthly Payment Reminder (Nepali 17th)
 
 on:
   schedule:
     - cron: "15 3 * * *"   # Daily 09:00 Nepal time (03:15 UTC)
   workflow_dispatch:
-    inputs:
-      force_send:
-        description: "Send message even if today is not Nepali 7th"
-        required: false
-        default: "false"
 
 jobs:
   send-message:
@@ -19,20 +14,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install nepali-datetime
 
-      - name: Check Nepali day-of-month == 7
+      - name: Check Nepali day-of-month == 17
         id: nepdate
-        env:
-          FORCE_SEND: ${{ github.event.inputs.force_send }}
         run: |
           python - << 'PY'
           import os
           import nepali_datetime
 
           bs = nepali_datetime.date.today()
-          force = (os.getenv("FORCE_SEND", "false").lower() == "true")
-          send = force or (bs.day == 7)
+          send = (bs.day == 17)
 
-          print("Nepali date:", bs, "force:", force, "send:", send)
+          print("Nepali date:", bs, "send:", send)
 
           out = os.environ["GITHUB_OUTPUT"]
           with open(out, "a") as f:
@@ -52,5 +44,5 @@ jobs:
 
           curl --fail -H "Content-Type: application/json" \
           -X POST \
-          -d "{\"content\":\"AF: Monthly payment reminder – ${NEP_MONTH} (Nepali date 7) 💰\"}" \
+          -d "{\"content\":\"AF: Monthly payment reminder – ${NEP_MONTH} (Nepali date 17) 💰\"}" \
           "$WEBHOOK"
