@@ -1,0 +1,54 @@
+name: AF Monthly Payment Reminder (Nepali 17th)
+
+on:
+  schedule:
+    - cron: "15 3 * * *"   # Daily 09:00 Nepal time (03:15 UTC)
+  workflow_dispatch:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install nepali-datetime
+        run: |
+          python -m pip install --upgrade pip
+          pip install nepali-datetime
+
+      - name: Check Nepali day-of-month == 17
+        id: nepdate
+        run: |
+          python - << 'PY'
+          import nepali_datetime
+          bs = nepali_datetime.date.today()
+          send = (bs.day == 17)
+          print("Nepali date:", bs, "send:", send)
+          with open("$GITHUB_OUTPUT", "a") as f:
+              f.write(f"send={'true' if send else 'false'}\n")
+          PY
+
+      - name: Send AF payment reminder
+        if: steps.nepdate.outputs.send == 'true'
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL_AF }}
+        run: |
+          python - << 'PY'
+          import nepali_datetime
+          import json
+          import subprocess
+      
+          bs = nepali_datetime.date.today()
+          nepali_month = bs.strftime("%B")  # Nepali month name
+      
+          payload = {
+              "content": f"AF: Monthly payment reminder – {nepali_month} (Nepali date 17)"
+          }
+      
+          subprocess.run([
+              "curl",
+              "-H", "Content-Type: application/json",
+              "-X", "POST",
+              "-d", json.dumps(payload),
+              "${WEBHOOK}"
+          ])
+          PY
+
