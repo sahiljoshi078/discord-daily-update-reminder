@@ -1,0 +1,19 @@
+name: Specific Date Discord Message
+
+on:
+  schedule:
+    - cron: "15 3 20 * *" # 09:00 Nepal time, 20th of every month
+  workflow_dispatch:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord message (monthly 20th)
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_SPECIFIC_DATE }}
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{"content":"💵 Salary reminder: today is the 20th!"}' \
+          "$WEBHOOK"
